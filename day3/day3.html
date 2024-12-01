@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mimi Geschenke</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <img src="mimi.png" alt="" id="dino" class="gameElement">
+        <img src="milch.png" id="obstacle" class="gameElement"></div>
+        <div id="ground"></div>
+        <div id="scoreDisplay">Punkte: 0</div>
+        <div id="highScoreDisplay">High Score: 0</div>
+    </div>
+    <div id="startScreen">
+        <button id="startButton">Los geht!</button>
+    </div>
+    <div id="gameOverScreen" style="display: none;">
+        <div id="scoreGameOverDisplay">High Score: 0</div>
+        <button id="playAgainButton">Nochmal?</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

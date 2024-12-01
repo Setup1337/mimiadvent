@@ -1,0 +1,136 @@
+body {
+    background-color: #f0f8ff;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    color: #d32f2f;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.presents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.present {
+    background-color: #28a745; /* Festive green */
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Keeps it square */
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden; /* Ensures the ribbon stays within bounds */
+}
+
+.present:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Add ribbons */
+.present::before,
+.present::after {
+    content: "";
+    position: absolute;
+    background-color: #d32f2f; /* Ribbon color: festive red */
+}
+
+/* Vertical ribbon */
+.present::before {
+    width: 20%;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Horizontal ribbon */
+.present::after {
+    width: 100%;
+    height: 20%;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* .present span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff; 
+    font-weight: bold;
+    font-size: 2rem; 
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+} */
+/* Add a bow */
+.present span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #fff;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 20px;
+    background-color: #d32f2f;
+    border-radius: 50%;
+    box-shadow: 0 0 0 8px #d32f2f;
+    z-index: 30;
+}
+
+/* Bow tails */
+.present span::before,
+.present span::after{
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background-color: #d32f2f;
+    transform: rotate(45deg);
+    bottom: -10px;
+    border-radius: 2px;
+}
+
+.present span::before {
+    left: -10px;
+}
+
+.present span::after {
+    right: -10px;
+    transform: rotate(135deg);
+}
+
+/* Add responsiveness */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .present span {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .presents-grid {
+        max-width: 1200px;
+    }
+}
+a.disabled {
+    pointer-events: none; /* Disables click interactions */
+    color: gray; /* Changes the text color to indicate it's disabled */
+    text-decoration: none; /* Optional: Removes underline */
+    opacity: 0.6; /* Makes it appear less prominent */
+    cursor: not-allowed; /* Shows a "not allowed" cursor on hover */
+}
