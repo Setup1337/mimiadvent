@@ -21,9 +21,9 @@ let score = 0; // Current score
 let highScore = localStorage.getItem('highScore') || 0; // Get the high score from localStorage
 highScoreDisplay.textContent = `High Score: ${highScore}`
 
-// Jumping logic
-document.addEventListener('keydown', function(event) {
-    if (event.key === ' ' && !isJumping && !isGameOver) {
+document.addEventListener('touchstart', function(event) {
+    // evt.preventDefault();
+    if (!isJumping && !isGameOver && gameContainer.style.display === 'block') {
         isJumping = true;
         jumpHeight = 0;
         let jumpInterval = setInterval(function() {
@@ -107,7 +107,7 @@ function restartGame() {
     dinoPosition = 0;
     isJumping = false;
     jumpHeight = 0;
-    obstaclePosition = 480;
+    obstaclePosition = gameContainer.clientWidth < 480 ? 480 : gameContainer.clientWidth;
     obstacleSpeed = 10;
     gameOverScreen.style.display = 'none';
     startGame();
