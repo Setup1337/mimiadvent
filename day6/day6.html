@@ -8,10 +8,10 @@
         html, body {
             height: 100%;
             margin: 0;
+            overflow: hidden;
         }
 
         body {
-            /*position: relative;*/
             background: black;
             display: flex;
             flex-direction: column;
@@ -23,6 +23,7 @@
 
         canvas {
             border: 1px solid white;
+            
         }
 
         #scoreboard {
@@ -35,21 +36,20 @@
     <span>Score: <span id="current-score">0</span></span>
     <span> | High Score: <span id="high-score">0</span></span>
 </div>
-<canvas id="game"></canvas>
+<canvas width="400" height="400" id="game"></canvas>
 <script>
-    const canvas = document.getElementById('game');
-    const context = canvas.getContext('2d');
+    document.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+    }, { passive: false });
 
-    // Set canvas size based on viewport
-    function resizeCanvas() {
-        const size = Math.min(window.innerWidth, window.innerHeight) * 0.8;
-        canvas.width = canvas.height = Math.floor(size / 16) * 16; // Keep canvas dimensions divisible by grid size
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    document.addEventListener('wheel', function (e) {
+        e.preventDefault();
+    }, { passive: false });
+    var canvas = document.getElementById('game');
+    var context = canvas.getContext('2d');
 
     // Score variables
-    let currentScore = 0;
+    var currentScore = 0;
     let highScore = localStorage.getItem('highScore') || 0;
 
     // Update score display
@@ -60,27 +60,27 @@
     }
 
     // Load images
-    const appleImage = new Image();
+    var appleImage = new Image();
     appleImage.src = 'tort.png'; // Provide the path to the apple image
 
-    const snakeHeadImage = new Image();
+    var snakeHeadImage = new Image();
     snakeHeadImage.src = 'mimi.png'; // Provide the path to the snake head image
 
-    let grid = canvas.width / 25; // Dynamically calculate grid size
-    let count = 0;
+    var grid = 16;
+    var count = 0;
 
-    const snake = {
-        x: grid * 10,
-        y: grid * 10,
+    var snake = {
+        x: 160,
+        y: 160,
         dx: grid,
         dy: 0,
         cells: [],
         maxCells: 4
     };
 
-    let apple = {
-        x: grid * 15,
-        y: grid * 15
+    var apple = {
+        x: 320,
+        y: 320
     };
 
     function getRandomInt(min, max) {
@@ -110,17 +110,17 @@
         if (snake.cells.length > snake.maxCells) snake.cells.pop();
 
         // Draw apple
-        context.drawImage(appleImage, apple.x, apple.y, grid - 2, grid - 2);
+        context.drawImage(appleImage, apple.x, apple.y, grid - 1, grid - 1);
 
         // Draw snake
         snake.cells.forEach((cell, index) => {
             if (index === 0) {
                 // Draw snake head
-                context.drawImage(snakeHeadImage, cell.x, cell.y, grid - 2, grid - 2);
+                context.drawImage(snakeHeadImage, cell.x, cell.y, grid - 1, grid - 1);
             } else {
                 // Draw snake body
                 context.fillStyle = 'green';
-                context.fillRect(cell.x, cell.y, grid - 2, grid - 2);
+                context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
             }
 
             // Snake eats apple
@@ -130,15 +130,15 @@
                 if (currentScore > highScore) highScore = currentScore;
                 updateScore();
 
-                apple.x = getRandomInt(0, canvas.width / grid) * grid;
-                apple.y = getRandomInt(0, canvas.height / grid) * grid;
+                apple.x = getRandomInt(0, 25) * grid;
+                apple.y = getRandomInt(0, 25) * grid;
             }
 
             // Snake collides with itself
-            for (let i = index + 1; i < snake.cells.length; i++) {
+            for (var i = index + 1; i < snake.cells.length; i++) {
                 if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-                    snake.x = grid * 10;
-                    snake.y = grid * 10;
+                    snake.x = 160;
+                    snake.y = 160;
                     snake.cells = [];
                     snake.maxCells = 4;
                     snake.dx = grid;
@@ -146,8 +146,8 @@
                     currentScore = 0;
                     updateScore();
 
-                    apple.x = getRandomInt(0, canvas.width / grid) * grid;
-                    apple.y = getRandomInt(0, canvas.height / grid) * grid;
+                    apple.x = getRandomInt(0, 25) * grid;
+                    apple.y = getRandomInt(0, 25) * grid;
                 }
             }
         });
