@@ -50,11 +50,11 @@
 
     // Score variables
     var currentScore = 0;
-    let highScore = localStorage.getItem('highScore') || 0;
+    let highScore = localStorage.getItem('schlangeHighScore') || 0;
 
     // Update score display
     function updateScore() {
-        localStorage.setItem('highScore', highScore);
+        localStorage.setItem('schlangeHighScore', highScore);
         document.getElementById('current-score').textContent = currentScore;
         document.getElementById('high-score').textContent = highScore;
     }
