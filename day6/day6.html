@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mimi Schlange</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            /*position: relative;*/
+            background: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            border: 1px solid white;
+        }
+
+        #scoreboard {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="scoreboard">
+    <span>Score: <span id="current-score">0</span></span>
+    <span> | High Score: <span id="high-score">0</span></span>
+</div>
+<canvas id="game"></canvas>
+<script>
+    const canvas = document.getElementById('game');
+    const context = canvas.getContext('2d');
+
+    // Set canvas size based on viewport
+    function resizeCanvas() {
+        const size = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+        canvas.width = canvas.height = Math.floor(size / 16) * 16; // Keep canvas dimensions divisible by grid size
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Score variables
+    let currentScore = 0;
+    let highScore = localStorage.getItem('highScore') || 0;
+
+    // Update score display
+    function updateScore() {
+        localStorage.setItem('highScore', highScore);
+        document.getElementById('current-score').textContent = currentScore;
+        document.getElementById('high-score').textContent = highScore;
+    }
+
+    // Load images
+    const appleImage = new Image();
+    appleImage.src = 'tort.png'; // Provide the path to the apple image
+
+    const snakeHeadImage = new Image();
+    snakeHeadImage.src = 'mimi.png'; // Provide the path to the snake head image
+
+    let grid = canvas.width / 25; // Dynamically calculate grid size
+    let count = 0;
+
+    const snake = {
+        x: grid * 10,
+        y: grid * 10,
+        dx: grid,
+        dy: 0,
+        cells: [],
+        maxCells: 4
+    };
+
+    let apple = {
+        x: grid * 15,
+        y: grid * 15
+    };
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    function loop() {
+        requestAnimationFrame(loop);
+
+        if (++count < 4) return;
+
+        count = 0;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Move snake
+        snake.x += snake.dx;
+        snake.y += snake.dy;
+
+        if (snake.x < 0) snake.x = canvas.width - grid;
+        else if (snake.x >= canvas.width) snake.x = 0;
+
+        if (snake.y < 0) snake.y = canvas.height - grid;
+        else if (snake.y >= canvas.height) snake.y = 0;
+
+        snake.cells.unshift({ x: snake.x, y: snake.y });
+
+        if (snake.cells.length > snake.maxCells) snake.cells.pop();
+
+        // Draw apple
+        context.drawImage(appleImage, apple.x, apple.y, grid - 2, grid - 2);
+
+        // Draw snake
+        snake.cells.forEach((cell, index) => {
+            if (index === 0) {
+                // Draw snake head
+                context.drawImage(snakeHeadImage, cell.x, cell.y, grid - 2, grid - 2);
+            } else {
+                // Draw snake body
+                context.fillStyle = 'green';
+                context.fillRect(cell.x, cell.y, grid - 2, grid - 2);
+            }
+
+            // Snake eats apple
+            if (cell.x === apple.x && cell.y === apple.y) {
+                snake.maxCells++;
+                currentScore++;
+                if (currentScore > highScore) highScore = currentScore;
+                updateScore();
+
+                apple.x = getRandomInt(0, canvas.width / grid) * grid;
+                apple.y = getRandomInt(0, canvas.height / grid) * grid;
+            }
+
+            // Snake collides with itself
+            for (let i = index + 1; i < snake.cells.length; i++) {
+                if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+                    snake.x = grid * 10;
+                    snake.y = grid * 10;
+                    snake.cells = [];
+                    snake.maxCells = 4;
+                    snake.dx = grid;
+                    snake.dy = 0;
+                    currentScore = 0;
+                    updateScore();
+
+                    apple.x = getRandomInt(0, canvas.width / grid) * grid;
+                    apple.y = getRandomInt(0, canvas.height / grid) * grid;
+                }
+            }
+        });
+    }
+
+    let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
+
+    document.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    });
+
+    document.addEventListener('touchend', function (e) {
+        touchEndX = e.changedTouches[0].clientX;
+        touchEndY = e.changedTouches[0].clientY;
+
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (deltaX > 0 && snake.dx === 0) snake.dx = grid, snake.dy = 0;
+            else if (deltaX < 0 && snake.dx === 0) snake.dx = -grid, snake.dy = 0;
+        } else {
+            if (deltaY > 0 && snake.dy === 0) snake.dy = grid, snake.dx = 0;
+            else if (deltaY < 0 && snake.dy === 0) snake.dy = -grid, snake.dx = 0;
+        }
+    }
+
+    requestAnimationFrame(loop);
+</script>
+</body>
+</html>
