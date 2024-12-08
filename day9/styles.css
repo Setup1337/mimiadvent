@@ -1,0 +1,109 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fdf6e3;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Fill the viewport height */
+    overflow: hidden; /* Prevent scrolling */
+}
+
+.dashboard {
+    text-align: center;
+    width: 90%; /* Make it adapt dynamically */
+    max-width: 600px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px; /* Adjusted padding for a compact layout */
+    margin: 0; /* Remove additional margins */
+    /*box-sizing: border-box; !* Include padding in the width and height calculations *!*/
+    height: 100%; /* Let content adjust naturally */
+}
+
+h1 {
+    color: #ff6f61;
+    font-size: 3.5rem; /* Reduce font size for smaller screens */
+    margin: 0 0 10px; /* Tighten spacing */
+}
+
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* Minimize spacing between items */
+}
+
+.stat {
+    background-color: #ffecd1;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 8px; /* Reduce padding */
+    text-align: center;
+    width: 100px; /* Fixed width to control size */
+    flex-grow: 1; /* Allow items to stretch equally if space permits */
+    max-width: 120px; /* Cap width to maintain compactness */
+}
+
+.stat h2 {
+    font-size: 0.8rem; /* Reduced font size */
+    color: #ff6f61;
+    margin-bottom: 5px; /* Tighten spacing */
+}
+
+.stat p {
+    font-size: 1.2rem; /* Adjust for better readability */
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    .dashboard {
+        width: 100%; /* Use full screen width */
+        max-width: none;
+        padding: 10px;
+    }
+
+    .stat {
+        padding: 6px;
+    }
+
+    .stat h2 {
+        font-size: 0.7rem;
+    }
+
+    .stat p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .stats {
+        flex-direction: row; /* Keep inline layout */
+        flex-wrap: wrap;
+        gap: 8px; /* Minimized spacing */
+        justify-content: space-between; /* Optimize space distribution */
+    }
+
+    .stat {
+        width: 120px; /* Reduce width for smaller screens */
+        padding: 5px;
+    }
+
+    .stat h2 {
+        font-size: 1.5rem;
+    }
+
+    .stat p {
+        font-size: 1rem;
+    }
+}
