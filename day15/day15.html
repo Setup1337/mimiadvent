@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ich habe versucht, „Geschenke auspacken“ zu machen</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f2f7fb;
+      text-align: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .present {
+      width: 200px;
+      height: 200px;
+      background-color: #c0392b;
+      margin: 20px auto;
+      position: relative;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    @media (max-width: 600px) {
+      .present {
+        width: 150px;
+        height: 150px;
+      }
+
+      .interactive-part {
+        width: 60px;
+        height: 25px;
+        line-height: 25px;
+        font-size: 14px;
+      }
+
+      .message {
+        font-size: 20px;
+      }
+    }
+
+    .ribbon {
+      position: absolute;
+      background-color: #f1c40f;
+      border-radius: 5px;
+    }
+
+    .ribbon.horizontal {
+      width: 100%;
+      height: 20px;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    .ribbon.vertical {
+      width: 20px;
+      height: 100%;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .message {
+      display: none;
+      font-size: 24px;
+      margin-top: 20px;
+      animation: fadeIn 1s forwards;
+    }
+
+    .message img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #ecf0f1;
+      opacity: 0.8;
+      border-radius: 50%;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(600px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .interactive-part {
+      background-color: #e74c3c;
+      border-radius: 5px;
+      height: 30px;
+      width: 80px;
+      margin: 10px auto;
+      line-height: 30px;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .interactive-part:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+<h1>🎁 Ich habe versucht, „Geschenke auspacken“ zu machen 🎄</h1>
+<div class="present" id="present">
+  <div class="ribbon horizontal"></div>
+  <div class="ribbon vertical"></div>
+  <div class="interactive-part" id="untieRibbon">Schleife lösen</div>
+  <div class="interactive-part" id="openBox" style="display: none;">Kiste öffnen</div>
+</div>
+<div class="message" id="message">Frohe 3. Advent! 🎉
+  <img src="pic.jpeg" alt="Unpacked Gift">
+</div>
+
+<script>
+  const untieRibbon = document.getElementById('untieRibbon');
+  const openBox = document.getElementById('openBox');
+  const present = document.getElementById('present');
+  const message = document.getElementById('message');
+
+  function createConfettiPiece() {
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+    confetti.style.left = `${Math.random() * 100}vw`;
+    confetti.style.top = `${Math.random() * -50}px`;
+    confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+    confetti.style.animationDelay = `${Math.random()}s`;
+    document.body.appendChild(confetti);
+
+    setTimeout(() => {
+      confetti.remove();
+    }, 5000);
+  }
+
+  function showConfetti() {
+    for (let i = 0; i < 150; i++) {
+      setTimeout(createConfettiPiece, i * 20);
+    }
+  }
+
+  untieRibbon.addEventListener('click', () => {
+    untieRibbon.style.display = 'none';
+    openBox.style.display = 'block';
+    present.querySelector('.ribbon.horizontal').style.display = 'none';
+    present.querySelector('.ribbon.vertical').style.display = 'none';
+  });
+
+  openBox.addEventListener('click', () => {
+    present.style.animation = 'explode 1s forwards';
+    setTimeout(() => {
+      present.style.display = 'none';
+      message.style.display = 'block';
+      showConfetti();
+    }, 1000);
+  });
+</script>
+</body>
+</html>
