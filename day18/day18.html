@@ -104,16 +104,36 @@
   let isMovingLeft = false;
   let isMovingRight = false;
 
+  const basketSpeed = 7;
 
   // Handle basket movement for keyboard
-  document.addEventListener("keydown", moveBasket);
+  // document.addEventListener("keydown", moveBasket);
 
-  function moveBasket(event) {
-    if (event.key === "ArrowLeft" && basketPosition > 0) {
-      basketPosition -= 20;
+  leftButton.addEventListener("mousedown", () => (isMovingLeft = true));
+  leftButton.addEventListener("mouseup", () => (isMovingLeft = false));
+  leftButton.addEventListener("mouseleave", () => (isMovingLeft = false)); // Stop moving if mouse leaves button
+  leftButton.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevent scrolling
+    isMovingLeft = true;
+  });
+  leftButton.addEventListener("touchend", () => (isMovingLeft = false));
+
+  // Event listeners for touch and mouse hold on the right button
+  rightButton.addEventListener("mousedown", () => (isMovingRight = true));
+  rightButton.addEventListener("mouseup", () => (isMovingRight = false));
+  rightButton.addEventListener("mouseleave", () => (isMovingRight = false)); // Stop moving if mouse leaves button
+  rightButton.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevent scrolling
+    isMovingRight = true;
+  });
+  rightButton.addEventListener("touchend", () => (isMovingRight = false));
+
+  function updateBasketPosition() {
+    if (isMovingLeft && basketPosition > 0) {
+      basketPosition -= basketSpeed; // Move left
     }
-    if (event.key === "ArrowRight" && basketPosition < canvasWidth - basketWidth) {
-      basketPosition += 20;
+    if (isMovingRight && basketPosition < canvasWidth - basketWidth) {
+      basketPosition += basketSpeed; // Move right
     }
   }
 
@@ -195,6 +215,8 @@
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
+    updateBasketPosition();
+    
     drawBasket();
     drawPills();
     updatePills();
