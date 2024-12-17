@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fangt die Pillen</title>
+  <style>
+    /* General reset */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #222;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 10px 0;
+    }
+
+    /* Canvas for the game */
+    canvas {
+      display: block;
+      background-color: #f0f8ff; /* Light blue for medical theme */
+      border: 5px solid #333;
+      margin: 0 auto;
+      margin-top: 20px;
+      max-width: 100%;
+    }
+
+    /* Controls for mobile */
+    #controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 18px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:active {
+      background-color: #004d40;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+    #playAgainButton {
+      display: none; /* Initially hidden */
+      margin-top: 20px;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+<h1>Fangt die Pillen!</h1>
+<p>Bewege den Kopf, um die herunterfallenden Pillen aufzufangen.</p>
+<p>Gute Besserung, Mein Schatz 🫶🏻 💐</p>
+<canvas id="gameCanvas" width="600" height="400"></canvas>
+
+<!-- Mobile Controls -->
+<div id="controls">
+  <button id="leftButton">⬅️ Links</button>
+  <button id="rightButton">➡️ Rechts</button>
+</div>
+
+<button id="playAgainButton">Nochmal?</button>
+
+<script>
+  // Canvas setup
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const leftButton = document.getElementById("leftButton");
+  const rightButton = document.getElementById("rightButton");
+  const playAgainButton = document.getElementById("playAgainButton");
+
+  // Game variables
+  const canvasWidth = canvas.width;
+  const canvasHeight = canvas.height;
+
+  let isGameRunning = true;
+
+  let basketPosition = 275; // Basket position
+  const basketWidth = 100;
+  const basketHeight = 20;
+
+  const pills = []; // Array to hold falling pills
+  const pillRadius = 12;
+  const pillSpeed = 3;
+
+  let score = 0;
+  let missedPills = 0;
+
+  let isMovingLeft = false;
+  let isMovingRight = false;
+
+
+  // Handle basket movement for keyboard
+  document.addEventListener("keydown", moveBasket);
+
+  function moveBasket(event) {
+    if (event.key === "ArrowLeft" && basketPosition > 0) {
+      basketPosition -= 20;
+    }
+    if (event.key === "ArrowRight" && basketPosition < canvasWidth - basketWidth) {
+      basketPosition += 20;
+    }
+  }
+
+  // Handle basket movement for mobile
+  leftButton.addEventListener("click", () => {
+    if (basketPosition > 0) basketPosition -= 20;
+  });
+
+  rightButton.addEventListener("click", () => {
+    if (basketPosition < canvasWidth - basketWidth) basketPosition += 20;
+  });
+
+  // Draw the basket
+  function drawBasket() {
+    const basketImage = new Image();
+    basketImage.src = "mimi.png";
+    ctx.drawImage(
+            basketImage,            // Image object
+            basketPosition,         // X position
+            canvasHeight - basketHeight - 10, // Y position
+            basketWidth,            // Width
+            basketHeight + 20       // Height (adjust to fit proportions)
+    );
+  }
+
+  // Spawn medical pills
+  function spawnPill() {
+    const randomX = Math.random() * (canvasWidth - pillRadius);
+    pills.push({ x: randomX, y: 0 });
+  }
+
+  // Draw medical pills
+  function drawPills() {
+    ctx.fillStyle = "#e53935"; // Red color for pills
+    for (let i = 0; i < pills.length; i++) {
+      const pill = pills[i];
+      ctx.beginPath();
+      ctx.arc(pill.x, pill.y, pillRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.closePath();
+    }
+  }
+
+  // Update pill positions and check for collisions
+  function updatePills() {
+    for (let i = 0; i < pills.length; i++) {
+      const pill = pills[i];
+      pill.y += pillSpeed;
+
+      // Check if pill hits the basket
+      if (
+              pill.y >= canvasHeight - basketHeight - 10 &&
+              pill.x >= basketPosition &&
+              pill.x <= basketPosition + basketWidth
+      ) {
+        pills.splice(i, 1);
+        i--;
+        score++;
+      } else if (pill.y > canvasHeight) {
+        // Missed the pill
+        pills.splice(i, 1);
+        i--;
+        missedPills++;
+      }
+    }
+  }
+
+  // Draw score and missed pills
+  function drawScore() {
+    ctx.fillStyle = "#000";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, 10, 30);
+    ctx.fillText("Verpasste Pillen: " + missedPills, 10, 60);
+  }
+
+  // Game loop
+  function gameLoop() {
+    if (!isGameRunning) return;
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    drawBasket();
+    drawPills();
+    updatePills();
+    drawScore();
+
+    if (Math.random() < 0.01) {
+      spawnPill();
+    }
+
+    // Game Over condition
+    if (missedPills >= 5) {
+      gameOver();
+    } else {
+      requestAnimationFrame(gameLoop);
+    }
+  }
+
+  // Game over screen
+  function gameOver() {
+    isGameRunning = false;
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "20px Arial";
+    ctx.fillText("Du bist so gut!", canvasWidth / 2 - 80, canvasHeight / 2);
+    ctx.fillText("Du hast " + score + " Pillen gesammelt, ich bin so stolz auf dich!", canvasWidth / 10, canvasHeight / 2 + 40);
+
+    playAgainButton.style.display = "flex";
+  }
+
+  // Start the game
+  function startGame() {
+    isGameRunning = true;
+    gameLoop();
+  }
+  
+  function resetGame() {
+    isGameRunning = true;
+    basketPosition = 275;
+    pills.length = 0;
+    score = 0;
+    missedPills = 0;
+
+    playAgainButton.style.display = "none"; // Hide "Play Again" button
+    gameLoop();
+  }
+
+  playAgainButton.addEventListener("click", resetGame);
+
+  startGame();
+</script>
+</body>
+</html>
